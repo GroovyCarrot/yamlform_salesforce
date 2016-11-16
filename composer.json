@@ -1,0 +1,14 @@
+{
+  "name": "drupal/yamlform_salesforce",
+  "type": "drupal-module",
+  "description": "Salesforce handlers for YAML form module.",
+  "keywords": ["Drupal"],
+  "license": "GPL-2.0+",
+  "homepage": "https://github.com/GroovyCarrot/yamlform_salesforce",
+  "minimum-stability": "dev",
+  "support": {
+    "issues": "https://github.com/GroovyCarrot/yamlform_salesforce/issues",
+    "source": "https://github.com/GroovyCarrot/yamlform_salesforce"
+  },
+  "require": { }
+}

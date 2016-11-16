@@ -1,0 +1,7 @@
+name: 'YAML form: Salesforce handler'
+type: module
+description: 'Salesforce handlers for YAML form module.'
+core: 8.x
+package: 'YAML Form'
+dependencies:
+  - yamlform

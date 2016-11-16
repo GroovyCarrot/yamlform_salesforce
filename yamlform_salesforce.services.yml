@@ -1,0 +1,23 @@
+services:
+  # Service definition to describe an object in Salesforce.
+  # Replace this with an alias.
+  yamlform_salesforce.client.describer:
+    class: Drupal\yamlform_salesforce\Salesforce\SalesforceObjectDescriberInterface
+    synthetic: true
+
+  # Service definition to create an object in Salesforce.
+  # Replace this with an alias.
+  yamlform_salesforce.client.creator:
+    class: Drupal\yamlform_salesforce\Salesforce\SalesforceObjectCreatorInterface
+    synthetic: true
+
+  yamlform_salesforce.mapper:
+    class: Drupal\yamlform_salesforce\Mapper\SubmissionMapper
+    arguments:
+      - '@token'
+
+  yamlform_salesforce.mapper.submission_handler:
+    class: Drupal\yamlform_salesforce\Mapper\SubmissionHandler
+    arguments:
+      - '@yamlform_salesforce.mapper'
+      - '@yamlform_salesforce.client.creator'
