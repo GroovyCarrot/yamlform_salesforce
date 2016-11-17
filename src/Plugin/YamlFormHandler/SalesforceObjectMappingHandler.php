@@ -137,7 +137,7 @@ class SalesforceObjectMappingHandler extends YamlFormHandlerBase {
    * @inheritdoc
    */
   public function validateConfigurationForm(array &$form, FormStateInterface $formState) {
-    if ($this->configuration['object']) {
+    if (isset($this->configuration['object'])) {
       // Ignore if we have already configured this object mapping.
       return;
     }
