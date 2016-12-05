@@ -5,6 +5,7 @@ namespace Drupal\yamlform_salesforce\Plugin\YamlFormHandler;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\yamlform\YamlFormHandlerBase;
 use Drupal\yamlform\YamlFormSubmissionInterface;
+use Drupal\yamlform_salesforce\Exception\FailedToCreateSalesforceObjectException;
 use Drupal\yamlform_salesforce\Exception\UnknownSalesforceObjectException;
 use Drupal\yamlform_salesforce\Mapper\ObjectMappingSubmissionHandlerInterface;
 use Drupal\yamlform_salesforce\Salesforce\SalesforceObjectDescriberInterface;
@@ -166,12 +167,30 @@ class SalesforceObjectMappingHandler extends YamlFormHandlerBase {
   /**
    * {@inheritdoc}
    */
-  public function postSave(YamlFormSubmissionInterface $submission, $update = TRUE) {
-    $this->submissionHandler->handleSubmission(
-      $submission,
-      $this->configuration['object'],
-      $this->configuration['mapping']
+  public function validateForm(array &$form, FormStateInterface $form_state, YamlFormSubmissionInterface $submission) {
+    $yamlform = $submission->getYamlForm();
+
+    // Get elements values from form submission.
+    $values = array_intersect_key(
+      $form_state->getValues(),
+      $yamlform->getElementsFlattenedAndHasValue()
     );
+
+    // Create the submission object, so that we can substitute tokens and send
+    // object data over the API.
+    $completeSubmission = clone $submission;
+    $completeSubmission->setData($values + $submission->getData());
+
+    try {
+      $this->submissionHandler->handleSubmission(
+        $completeSubmission,
+        $this->configuration['object'],
+        $this->configuration['mapping']
+      );
+    }
+    catch (FailedToCreateSalesforceObjectException $e) {
+      $form_state->setError($form, $e->getMessage());
+    }
   }
 
 }

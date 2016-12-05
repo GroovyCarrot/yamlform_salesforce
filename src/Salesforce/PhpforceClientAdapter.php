@@ -16,6 +16,7 @@ use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\yamlform_salesforce\Exception\FailedToCreateSalesforceObjectException;
 use Drupal\yamlform_salesforce\Exception\UnknownSalesforceObjectException;
 use Phpforce\SoapClient\ClientInterface;
+use Phpforce\SoapClient\Exception\SaveException;
 use Phpforce\SoapClient\Result\SaveResult;
 
 /**
@@ -94,18 +95,16 @@ class PhpforceClientAdapter implements
    */
   public function createObject(string $object, \stdClass $objectData)/* : void */ {
     /** @var SaveResult[] $results */
-    if (isset($objectData->Id)) {
-      $results = $this->client->update([$objectData], $object);
+    try {
+      if (isset($objectData->Id)) {
+        $this->client->update([$objectData], $object);
+      }
+      else {
+        $this->client->create([$objectData], $object);
+      }
     }
-    else {
-      $results = $this->client->create([$objectData], $object);
-    }
-
-    $result = $results[0];
-
-    if (!$result->isSuccess()) {
-      $errors = $result->getErrors();
-      throw new FailedToCreateSalesforceObjectException($errors[0]->getMessage());
+    catch (SaveException $e) {
+      throw new FailedToCreateSalesforceObjectException($e->getMessage());
     }
   }
 
